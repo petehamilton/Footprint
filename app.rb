@@ -1,9 +1,9 @@
+require 'rubygems'
 require "sinatra"
 require 'koala'
 
-enable :sessions
-set :raise_errors, false
-set :show_exceptions, false
+set :raise_errors, true # Set false on prod
+set :show_exceptions, true # Set false on prod
 
 # Scope defines what permissions that we are asking the user to grant.
 # In this example, we are asking for the ability to publish stories
@@ -16,6 +16,11 @@ FACEBOOK_SCOPE = 'user_likes,user_photos,user_photo_video_tags'
 
 unless ENV["FACEBOOK_APP_ID"] && ENV["FACEBOOK_SECRET"]
   abort("missing env vars: please set FACEBOOK_APP_ID and FACEBOOK_SECRET with your app credentials")
+end
+
+configure do
+  set :public_folder, Proc.new { File.join(root, "static") }
+  enable :sessions
 end
 
 before do
@@ -71,6 +76,20 @@ get "/" do
     @friends_using_app = @graph.fql_query("SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1")
   end
   erb :index
+end
+
+get "/checkins" do
+  # Get base API Connection
+  @graph  = Koala::Facebook::API.new(session[:facebook_access_token])
+
+  # Get public details of current application
+  @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
+
+  if session[:facebook_access_token]
+    @checkins = @graph.get_connections('me', 'checkins')
+  end
+
+  erb :checkins
 end
 
 # used by Canvas apps - redirect the POST to be a regular GET
