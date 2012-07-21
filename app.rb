@@ -3,6 +3,9 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rubygems'
 require 'sinatra'
 require 'koala'
+require 'coffee-script'
+require 'sass'
+
 require 'lib/facebook_checkin'
 
 set :raise_errors, true # Set false on prod
@@ -61,6 +64,14 @@ error(Koala::Facebook::APIError) do
   redirect "/auth/facebook"
 end
 
+get '/javascripts/application.js' do
+  coffee :application
+end
+
+get '/stylesheets/application.css' do
+  scss :application
+end
+
 get "/" do
   # Get base API Connection
   @graph  = Koala::Facebook::API.new(session[:access_token])
@@ -88,13 +99,27 @@ get "/checkins" do
   @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
 
   if session[:facebook_access_token]
-    @user    = @graph.get_object("me")
     @checkins = @graph.get_connections('me', 'checkins').map{|c| FacebookCheckin.new(c)}
   else
     redirect '/auth/facebook'
   end
 
   erb :checkins
+end
+
+get "/map" do
+  # Get base API Connection
+  @graph  = Koala::Facebook::API.new(session[:facebook_access_token])
+
+  # Get public details of current application
+  @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
+
+  if session[:facebook_access_token]
+  else
+    redirect '/auth/facebook'
+  end
+
+  erb :map
 end
 
 # used by Canvas apps - redirect the POST to be a regular GET

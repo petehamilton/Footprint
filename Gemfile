@@ -1,9 +1,12 @@
 source :gemcutter
 
-gem "sinatra"
-gem "koala"
-gem "json"
-gem "httparty"
-gem "thin"
+gem 'sinatra'
+gem 'koala'
+gem 'json'
+gem 'httparty'
+gem 'thin'
 
-gem "foreman" # manage env
+gem 'coffee-script'
+gem 'sass'
+
+gem 'foreman' # manage env
