@@ -12,7 +12,7 @@ set :show_exceptions, false
 # permissions your app needs.
 # See https://developers.facebook.com/docs/reference/api/permissions/
 # for a full list of permissions
-FACEBOOK_SCOPE = 'user_likes,user_photos,user_photo_video_tags,user_checkins,friends_checkins,user_status,friends_status'
+FACEBOOK_SCOPE = 'user_likes,user_photos,user_photo_video_tags'
 
 unless ENV["FACEBOOK_APP_ID"] && ENV["FACEBOOK_SECRET"]
   abort("missing env vars: please set FACEBOOK_APP_ID and FACEBOOK_SECRET with your app credentials")
@@ -50,23 +50,22 @@ end
 
 # the facebook session expired! reset ours and restart the process
 error(Koala::Facebook::APIError) do
-  session[:facebook_access_token] = nil
+  session[:access_token] = nil
   redirect "/auth/facebook"
 end
 
 get "/" do
   # Get base API Connection
-  @graph  = Koala::Facebook::API.new(session[:facebook_access_token])
+  @graph  = Koala::Facebook::API.new(session[:access_token])
 
   # Get public details of current application
   @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
 
-  if session[:facebook_access_token]
+  if session[:access_token]
     @user    = @graph.get_object("me")
     @friends = @graph.get_connections('me', 'friends')
     @photos  = @graph.get_connections('me', 'photos')
     @likes   = @graph.get_connections('me', 'likes').first(4)
-    @checkins = @graph.get_connections('me', 'checkins')
 
     # for other data you can always run fql
     @friends_using_app = @graph.fql_query("SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1")
@@ -85,16 +84,16 @@ get "/close" do
 end
 
 get "/sign_out" do
-  session[:facebook_access_token] = nil
+  session[:access_token] = nil
   redirect '/'
 end
 
 get "/auth/facebook" do
-  session[:facebook_access_token] = nil
+  session[:access_token] = nil
   redirect authenticator.url_for_oauth_code(:permissions => FACEBOOK_SCOPE)
 end
 
 get '/auth/facebook/callback' do
-	session[:facebook_access_token] = authenticator.get_access_token(params[:code])
+	session[:access_token] = authenticator.get_access_token(params[:code])
 	redirect '/'
 end
