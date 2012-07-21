@@ -1,13 +1,12 @@
-          <div class="list">
-            <h3>A few of your friends</h3>
-            <ul class="friends">
-              <% @friends.each do |friend| %>
-                <li>
-                  <a href="#" onclick="window.open('http://www.facebook.com/<%= friend['id']%>')">
-                    <img src="https://graph.facebook.com/<%= friend['id'] %>/picture?type=square" alt="<%= friend['name'] %>">
-                    <%= friend['name'] %>
-                  </a>
-                </li>
-              <% end %>
-            </ul>
-          </div>
+<% if @user %>
+  <div class="list">
+    <h3>A few of your friends</h3>
+    <ul class="friends">
+      <% @checkins.each do |checkin| %>
+        <li>
+          <pre><%= checkin %></pre>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

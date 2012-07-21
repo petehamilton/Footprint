@@ -1,6 +1,9 @@
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+
 require 'rubygems'
-require "sinatra"
+require 'sinatra'
 require 'koala'
+require 'lib/facebook_checkin'
 
 set :raise_errors, true # Set false on prod
 set :show_exceptions, true # Set false on prod
@@ -19,7 +22,6 @@ unless ENV["FACEBOOK_APP_ID"] && ENV["FACEBOOK_SECRET"]
 end
 
 configure do
-  set :public_folder, Proc.new { File.join(root, "static") }
   enable :sessions
 end
 
@@ -86,7 +88,10 @@ get "/checkins" do
   @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
 
   if session[:facebook_access_token]
-    @checkins = @graph.get_connections('me', 'checkins')
+    @user    = @graph.get_object("me")
+    @checkins = @graph.get_connections('me', 'checkins').map{|c| FacebookCheckin.new(c)}
+  else
+    redirect '/auth/facebook'
   end
 
   erb :checkins
