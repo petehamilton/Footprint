@@ -14,7 +14,7 @@ get "/earth" do
   @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
   puts session.inspect
   if session[:facebook_access_token]
-    @checkins = @graph.get_connections('me', 'checkins').map{|c| FacebookCheckin.new(c)}
+    @checkins = @graph.get_connections('me', 'checkins').map{|c| FacebookLocation.new(c)}
     @lons = @checkins.map{|c| c.lon}
     @lats = @checkins.map{|c| c.lat}
   else
