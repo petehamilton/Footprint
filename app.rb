@@ -84,25 +84,6 @@ get "/" do
   erb :index
 end
 
-
-
-get "/checkins" do
-  # Get base API Connection
-  @graph  = Koala::Facebook::API.new(session[:facebook_access_token])
-  # Get public details of current application
-  @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
-
-  if session[:facebook_access_token]
-    @checkins = @graph.get_connections('me', 'checkins').map{|c| FacebookCheckin.new(c)}
-  else
-    redirect '/auth/facebook'
-  end
-  # raise foursquare_client.inspect
-  # @fsc = foursquare_client.user_checkins
-
-  erb :checkins
-end
-
 # used by Canvas apps - redirect the POST to be a regular GET
 post "/" do
   redirect "/"
@@ -133,3 +114,4 @@ require './foursquare_auth.rb'
 
 require './earth_app.rb'
 require './maps_app.rb'
+require './checkins_app.rb'
