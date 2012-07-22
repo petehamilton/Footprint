@@ -8,13 +8,14 @@ $(document).ready ->
       mapTypeId: google.maps.MapTypeId.ROADMAP
     map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions)
 
-    richMarker = (i, label) ->
+    richMarker = (i, label, photos) ->
       # content element of a rich marker
       richMarkerContent    = document.createElement('div');
-      b = $('<div id="marker_' + i + '" style="width:1px; height: 1px; background-color: #; display: block;"><input id="marker_name_' + i + '" type="hidden" value="' + label + '"/><canvas class="marker_canvas" id="marker_canvas_' + i + '" width="400" height="400" style="margin-left:-200px; margin-top:-200px;"></canvas></div>')
+      console.log photos
+      b = $('<div id="marker_' + i + '" style="width:1px; height: 1px; background-color: #; display: block;"><input id="marker_name_' + i + '" type="hidden" value=\'' + label + '\'/><input id="marker_photos_' + i + '" type="hidden" value=\'' + photos.toString().replace('"', '\"') + '\'/><canvas class="marker_canvas" id="marker_canvas_' + i + '" width="400" height="400" style="margin-left:-200px; margin-top:-200px;"></canvas></div>')
       $(richMarkerContent).append(b);
 
-      console.log richMarkerContent
+      # console.log richMarkerContent
       return $(richMarkerContent).html()
 
 
@@ -35,7 +36,7 @@ $(document).ready ->
           title: checkin.place.name
 
         # create a rich marker ("position" and "map" are google maps objects)
-        richMarkerContent = richMarker(i, checkin.place.name)
+        richMarkerContent = richMarker(i, checkin.place.name, JSON.stringify(checkin.photos))
         marker = new RichMarker
           position    : position
           map         : map
@@ -51,6 +52,10 @@ $(document).ready ->
 
     root.goToLocation = (i, distance=500) =>
       console.log markers, i
+      console.log $("#marker_photos_" + i), i
+      console.log "GOTJSON", JSON.parse($("#marker_photos_" + i).val())
+
+      photos = JSON.parse($("#marker_photos_" + i).val())
 
       map.panTo markers[i].position
       map.setZoom(17)
@@ -92,11 +97,15 @@ $(document).ready ->
             }).drawLayers()
 
             for j in [0..7]
+              if j < photos.length
+                source = photos[j]
+              else
+                source = "http://wm-icons.sourceforge.net/data/wm-icons-current/icons/64x64-gant/empty.png"
               mc.drawImage({
                 layer: true,
                 index: 0,
                 name: "img" + j,
-                source: "https://fbcdn-profile-a.akamaihd.net/hprofile-ak-snc4/49464_1111745248_2011951642_n.jpg",
+                source: source,
                 x: 200,
                 y: 200,
                 width: 100,

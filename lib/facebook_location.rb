@@ -50,6 +50,9 @@
 #    }
 # }
 class FacebookLocation
+  attr_accessor :location_object
+  @location_object = nil
+
   def initialize(location_object)
     @location_object = location_object
   end
@@ -79,7 +82,23 @@ class FacebookLocation
     "    #{type}\n" +
     "    #{created_date}\n" +
     "    #{lat}\n" +
-    "    #{lon}\n"
+    "    #{lon}\n" +
+    "    #{@location_object.inspect}"
+  end
+
+  def get_images(session)
+    # return ["https://fbcdn-photos-a.akamaihd.net/hphotos-ak-snc6/181132_4077098961783_1777774991_s.jpg","https://fbcdn-photos-a.akamaihd.net/hphotos-ak-ash3/553166_3540399873646_915375718_s.jpg"]
+    # return [] if type != "photo" #Fix if can get photos for checkin
+    @graph  = Koala::Facebook::API.new(session[:facebook_access_token])
+
+    if @photos.nil?
+      query = "SELECT src, created FROM photo WHERE object_id IN (SELECT object_id FROM photo_tag WHERE subject=me() AND created >= #{created_date.to_time.to_i} ORDER BY created ASC LIMIT 8) ORDER BY created ASC "
+      photos = @graph.fql_query(query)
+      puts "#{query} :: #{photos.inspect}"
+      photos.map!{|p| p["src"]}
+      @photos ||= photos
+    end
+    return @photos[0..8]
   end
 
   def to_json(options={})

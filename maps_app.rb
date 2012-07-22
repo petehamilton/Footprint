@@ -14,7 +14,8 @@ get "/map" do
   @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
   puts session.inspect
   if session[:facebook_access_token]
-    @checkins = @graph.get_connections('me', 'checkins').map{|c| FacebookLocation.new(c)}
+    @result = @graph.get_connections('me', 'locations')
+    @checkins = (@result).map{|c| FacebookLocation.new(c)}
   else
     redirect '/auth/facebook'
   end
@@ -29,14 +30,23 @@ get '/map/checkins.json' do
   @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
 
   if session[:facebook_access_token]
-    @checkins = @graph.get_connections('me', 'checkins').reverse!
+    @result = @graph.get_connections('me', 'locations')
+    @checkins = (@result).reverse!
   else
     redirect '/auth/facebook'
   end
+  
+  fbcheckins = @checkins.map{|c| FacebookLocation.new(c)}
+
+  fbcheckins.each do |c|
+    c.location_object['photos'] = c.get_images(session)
+  end
+
+  real_checkins = fbcheckins.map{|c| c.location_object}
+  # raise real_checkins.inspect
 
   content_type :json
-  # @checkins.map{|c| {lat: c.lat, lon: c.lon}}.to_json
-  @checkins.to_json
+  real_checkins.to_json
 end
 
 get '/map/checkin_timeline.json' do
@@ -47,7 +57,8 @@ get '/map/checkin_timeline.json' do
   @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
 
   if session[:facebook_access_token]
-    @checkins = @graph.get_connections('me', 'checkins')
+    @result = @graph.get_connections('me', 'locations')
+    @checkins = @result
   else
     redirect '/auth/facebook'
   end

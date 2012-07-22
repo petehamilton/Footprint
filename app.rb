@@ -19,7 +19,7 @@ set :show_exceptions, true # Set false on prod
 # permissions your app needs.
 # See https://developers.facebook.com/docs/reference/api/permissions/
 # for a full list of permissions
-FACEBOOK_SCOPE = 'user_likes,user_photos,user_photo_video_tags'
+FACEBOOK_SCOPE = 'user_likes,user_photos,user_photo_video_tags,user_checkins,friends_checkins,user_status,friends_status'
 
 unless ENV["FACEBOOK_APP_ID"] && ENV["FACEBOOK_SECRET"]
   abort("missing env vars: please set FACEBOOK_APP_ID and FACEBOOK_SECRET with your app credentials")
@@ -61,18 +61,28 @@ end
 
 # the facebook session expired! reset ours and restart the process
 error(Koala::Facebook::APIError) do
-  session[:access_token] = nil
+  session[:facebook_access_token] = nil
   redirect "/auth/facebook"
 end
 
 get "/" do
   # Get base API Connection
-  @graph  = Koala::Facebook::API.new(session[:access_token])
+  @graph  = Koala::Facebook::API.new(session[:facebook_access_token])
+  # # query = "SELECT src FROM photo WHERE object_id=#{@location_object['id']} ORDER BY created"
+  # query = "SELECT src, created FROM photo WHERE object_id IN (SELECT object_id FROM photo_tag WHERE subject=me() AND created) ORDER BY created DESC"
+  # photos = @graph.fql_query(query)
+
+  # @user    = @graph.get_object("me")
+  # @friends = @graph.fql_query("SELECT uid2 FROM friend WHERE uid1 = me()")
+
+  # raise @friends.inspect
+  # raise @user.inspect
+  # raise photos.inspect
 
   # Get public details of current application
   @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
 
-  if session[:access_token]
+  if session[:facebook_access_token]
     @user    = @graph.get_object("me")
     @friends = @graph.get_connections('me', 'friends')
     @photos  = @graph.get_connections('me', 'photos')
@@ -108,9 +118,6 @@ get '/auth/facebook/callback' do
   session[:facebook_access_token] = authenticator.get_access_token(params[:code])
   redirect '/'
 end
-
-require './facebook_auth.rb'
-require './foursquare_auth.rb'
 
 require './earth_app.rb'
 require './maps_app.rb'
