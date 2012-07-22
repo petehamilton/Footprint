@@ -38,7 +38,7 @@ $(document).ready ->
       # console.log map, markers, markers[i], bounds
       # bounds.extend(markers[i].position)
       # map.fitBounds(bounds)
-      map.panTo markers[i].position
+      map.panTo markers[MAth.min(i-1, 0)].position
       map.setZoom(17)
       # center = new GPoint( (maxLon+minLon)/2, (maxLat+minLat)/2 )
       # delta = new GSize( maxLon-minLon, maxLat-minLat)
