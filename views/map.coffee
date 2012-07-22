@@ -21,7 +21,7 @@ $(document).ready ->
 
     markers = []
 
-    $.getJSON '/map/checkins.json', (data) =>
+    $.getJSON '/map_checkins.json', (data) =>
       bounds = new google.maps.LatLngBounds()
       markers = []
       i = 0
@@ -81,7 +81,7 @@ $(document).ready ->
           shadowBlur: 5,
         })
         .animateLayer(0, {
-            radius: 120,
+            radius: 90,
             index: 0,
           },
           500,
@@ -108,11 +108,11 @@ $(document).ready ->
                 source: source,
                 x: 200,
                 y: 200,
-                width: 100,
-                height: 100,
+                width: 120,
+                height: 120,
                 fromCenter: true,
                 translateX: 0,
-                translateY: -150
+                translateY: -140
               })
             for k in [0..7]
               animatel(mc, k)
