@@ -4705,7 +4705,7 @@ if(typeof VMM != 'undefined' && typeof VMM.Slider == 'undefined') {
         window.console.log(n);
         window.goToLocation(n-1); // Tony field would shoot me
       } catch (e) {
-        window.console.log("ERROR", n)
+        window.console.log("ERROR", e, n)
       }
 
       /* STOP ANY VIDEO PLAYERS ACTIVE
