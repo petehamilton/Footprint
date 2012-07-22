@@ -7,7 +7,7 @@ require 'coffee-script'
 require 'sass'
 require 'json'
 
-require 'lib/facebook_checkin'
+require 'lib/facebook_location'
 
 set :raise_errors, true # Set false on prod
 set :show_exceptions, true # Set false on prod
