@@ -14,7 +14,7 @@ get "/map" do
   @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
   puts session.inspect
   if session[:facebook_access_token]
-    @checkins = @graph.get_connections('me', 'checkins').map{|c| FacebookCheckin.new(c)}
+    @checkins = @graph.get_connections('me', 'checkins').map{|c| FacebookLocation.new(c)}
   else
     redirect '/auth/facebook'
   end
