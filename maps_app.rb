@@ -20,3 +20,21 @@ get "/map" do
   end
   erb :map
 end
+
+get '/map/checkins.json' do
+  # Get base API Connection
+  @graph  = Koala::Facebook::API.new(session[:facebook_access_token])
+
+  # Get public details of current application
+  @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
+
+  if session[:facebook_access_token]
+    @checkins = @graph.get_connections('me', 'checkins').reverse!
+  else
+    redirect '/auth/facebook'
+  end
+
+  content_type :json
+  # @checkins.map{|c| {lat: c.lat, lon: c.lon}}.to_json
+  @checkins.to_json
+end

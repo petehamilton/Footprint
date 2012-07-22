@@ -10,4 +10,6 @@ gem 'coffee-script'
 gem 'sass'
 gem 'json'
 
+gem 'foursquare2'
+
 gem 'foreman' # manage env
