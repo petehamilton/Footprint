@@ -114,4 +114,8 @@ require './foursquare_auth.rb'
 
 require './earth_app.rb'
 require './maps_app.rb'
+<<<<<<< Updated upstream
 require './checkins_app.rb'
+=======
+require './love.rb'
+>>>>>>> Stashed changes
