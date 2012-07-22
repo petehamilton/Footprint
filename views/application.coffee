@@ -9,8 +9,7 @@ $(document).ready ->
       # console.log "T"
       ge = root.ge
       # console.log ge
-    , 2000
-
+    , 5000
 
   positions = []
   $.getJSON 'checkins.json', (data) =>
@@ -18,12 +17,13 @@ $(document).ready ->
     positions = []
     for checkin in data
       location = checkin.place.location
-      position = {lat: location.latitude, lon: location.longitude}
+      position = {name: checkin.place.name, lat: location.latitude, lon: location.longitude}
       positions.push position
 
   root.goToLocation = (i, distance=500) =>
     lookAt = ge.createLookAt('')
     position = positions[i]
+    console.log position
     ge.getOptions().setFlyToSpeed(0.4) #0 -> 5, bigger = faster
     lookAt.setLatitude(position.lat)
     lookAt.setLongitude(position.lon)
