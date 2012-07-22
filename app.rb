@@ -21,15 +21,15 @@ set :show_exceptions, true # Set false on prod
 # for a full list of permissions
 FACEBOOK_SCOPE = 'user_likes,user_photos,user_photo_video_tags,user_checkins,friends_checkins,user_status,friends_status'
 
-unless ENV["FACEBOOK_APP_ID"] && ENV["FACEBOOK_SECRET"]
-  abort("missing env vars: please set FACEBOOK_APP_ID and FACEBOOK_SECRET with your app credentials")
-end
-
 configure do
   enable :sessions
 end
 
 before do
+  unless ENV["FACEBOOK_APP_ID"] && ENV["FACEBOOK_SECRET"]
+    abort("missing env vars: please set FACEBOOK_APP_ID and FACEBOOK_SECRET with your app credentials")
+  end
+
   # HTTPS redirect
   if settings.environment == :production && request.scheme != 'https'
     redirect "https://#{request.env['HTTP_HOST']}"
@@ -84,12 +84,12 @@ get "/" do
 
   if session[:facebook_access_token]
     @user    = @graph.get_object("me")
-    @friends = @graph.get_connections('me', 'friends')
-    @photos  = @graph.get_connections('me', 'photos')
-    @likes   = @graph.get_connections('me', 'likes').first(4)
+    # @friends = @graph.get_connections('me', 'friends')
+    # @photos  = @graph.get_connections('me', 'photos')
+    # @likes   = @graph.get_connections('me', 'likes').first(4)
 
     # for other data you can always run fql
-    @friends_using_app = @graph.fql_query("SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1")
+    # @friends_using_app = @graph.fql_query("SELECT uid, name, is_app_user, pic_square FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1 = me()) AND is_app_user = 1")
   end
   erb :index
 end
@@ -116,7 +116,7 @@ end
 
 get '/auth/facebook/callback' do
   session[:facebook_access_token] = authenticator.get_access_token(params[:code])
-  redirect '/'
+  redirect '/map'
 end
 
 require './earth_app.rb'

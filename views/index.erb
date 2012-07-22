@@ -18,10 +18,10 @@
         <div class="container">
 
             <a class="brand" href="#">
-              Footprint
+              <img src="/images/logo.png" width="100px" />
             </a>
 
-            <ul class="nav">
+            <ul class="nav" style="margin-top:5px">
               <li><a href="/">Home</a></li>
               <li><a href="/checkins">Checkins</a></li>
               <li><a href="/map">Map</a></li>
@@ -74,23 +74,25 @@
     </script>
 
     <header class="clearfix">
-      <% if @user %>
-          <p id="picture" style="background-image: url(https://graph.facebook.com/<%= @user['id'] %>/picture?type=normal)"></p>
-          <div>
-            <h1>Welcome, <strong><%= @user['name'] %></strong></h1>
-            <p class="tagline">
-              This is the app
-              <a href="<%= @app['@app'] %>"><%= @app['name'] %></a>
-            </p>
-      <% else %>
-        <div style="width:100px; margin:0 auto; text-align: center;">
-          <h1 style="margin-bottom:10px;">Log In</h1>
-            <a href='/auth/facebook' class="fb_button fb_button_medium">
-              <span class="fb_button_text">Log In</span>
-            </a>
-        </div>
 
-      <% end %>
+        <div style="width:500px; height: 300px; margin:0 auto; text-align: center; padding-top: 130px; margin-top:50px; background: url('/images/logo.png') no-repeat top center;">
+          <% if @user %>
+              <div style="text-align: center;">
+                <h1>Welcome, <strong><%= @user['name'] %>!</strong></h1>
+            </div>
+          <% else %>
+            Footprints is a series of experiments for visualising where you've been and when.
+
+            Log in with facebook below to get started!
+
+            <div style="padding-top: 10px; width:100px; margin:0 auto; text-align: center;">
+                <a href='/auth/facebook' class="fb_button fb_button_medium">
+                  <span class="fb_button_text">Log In</span>
+                </a>
+            </div>
+
+          <% end %>
+        </div>
     </header>
   </div>
   </body>

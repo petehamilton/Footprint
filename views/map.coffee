@@ -81,7 +81,7 @@ $(document).ready ->
           shadowBlur: 5,
         })
         .animateLayer(0, {
-            radius: 90,
+            radius: 110,
             index: 0,
           },
           500,
