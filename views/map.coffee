@@ -21,7 +21,7 @@ $(document).ready ->
 
     markers = []
 
-    $.getJSON '/map_checkins.json', (data) =>
+    $.getJSON '/map/checkins.json', (data) =>
       bounds = new google.maps.LatLngBounds()
       markers = []
       i = 0
