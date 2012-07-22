@@ -108,11 +108,11 @@ $(document).ready ->
                 source: source,
                 x: 200,
                 y: 200,
-                width: 120,
-                height: 120,
+                width: 100,
+                height: 100,
                 fromCenter: true,
                 translateX: 0,
-                translateY: -140
+                translateY: -150
               })
             for k in [0..7]
               animatel(mc, k)
