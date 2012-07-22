@@ -5,6 +5,7 @@ require 'sinatra'
 require 'koala'
 require 'coffee-script'
 require 'sass'
+require 'json'
 
 require 'lib/facebook_checkin'
 
@@ -107,6 +108,24 @@ get "/checkins" do
   erb :checkins
 end
 
+get '/checkins.json' do
+  # Get base API Connection
+  @graph  = Koala::Facebook::API.new(session[:facebook_access_token])
+
+  # Get public details of current application
+  @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
+
+  if session[:facebook_access_token]
+    @checkins = @graph.get_connections('me', 'checkins')
+  else
+    redirect '/auth/facebook'
+  end
+
+  content_type :json
+  # @checkins.map{|c| {lat: c.lat, lon: c.lon}}.to_json
+  @checkins.to_json
+end
+
 get "/map" do
   # Get base API Connection
   @graph  = Koala::Facebook::API.new(session[:facebook_access_token])
@@ -115,6 +134,9 @@ get "/map" do
   @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
 
   if session[:facebook_access_token]
+    @checkins = @graph.get_connections('me', 'checkins').map{|c| FacebookCheckin.new(c)}
+    @lons = @checkins.map{|c| c.lon}
+    @lats = @checkins.map{|c| c.lat}
   else
     redirect '/auth/facebook'
   end

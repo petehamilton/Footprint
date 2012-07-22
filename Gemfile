@@ -8,5 +8,6 @@ gem 'thin'
 
 gem 'coffee-script'
 gem 'sass'
+gem 'json'
 
 gem 'foreman' # manage env
