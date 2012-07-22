@@ -44,11 +44,3 @@ $(document).ready ->
 
   root.seePosition = (i) =>
     console.log positions[i]
-
-
-  # GOOGLE MAPS STUFF
-  if $('#footprint_map_container').length > 0
-    map = new GMaps
-      div: '#map_canvas'
-      lat: -12.043333
-      lng: -77.028333

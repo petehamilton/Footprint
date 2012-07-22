@@ -1,3 +1,11 @@
+get '/map/application.js' do
+  coffee :map
+end
+
+get '/map/application.css' do
+  scss :map
+end
+
 get "/map" do
   # Get base API Connection
   @graph  = Koala::Facebook::API.new(session[:facebook_access_token])
