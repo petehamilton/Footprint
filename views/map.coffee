@@ -29,6 +29,10 @@ $(document).ready ->
         markers.push marker
       map.fitBounds(bounds)
 
+    root.goToLocation = (i, distance=500) =>
+      map.panTo markers[i].position
+      map.setZoom(17)
+    
     root.seeMarker = (i) =>
       # bounds = new google.maps.LatLngBounds()
       # console.log map, markers, markers[i], bounds
