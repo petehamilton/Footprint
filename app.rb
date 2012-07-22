@@ -132,7 +132,7 @@ get "/map" do
 
   # Get public details of current application
   @app  =  @graph.get_object(ENV["FACEBOOK_APP_ID"])
-
+  puts session.inspect
   if session[:facebook_access_token]
     @checkins = @graph.get_connections('me', 'checkins').map{|c| FacebookCheckin.new(c)}
     @lons = @checkins.map{|c| c.lon}
@@ -155,16 +155,16 @@ get "/close" do
 end
 
 get "/sign_out" do
-  session[:access_token] = nil
+  session[:facebook_access_token] = nil
   redirect '/'
 end
 
 get "/auth/facebook" do
-  session[:access_token] = nil
+  session[:facebook_access_token] = nil
   redirect authenticator.url_for_oauth_code(:permissions => FACEBOOK_SCOPE)
 end
 
 get '/auth/facebook/callback' do
-	session[:access_token] = authenticator.get_access_token(params[:code])
+	session[:facebook_access_token] = authenticator.get_access_token(params[:code])
 	redirect '/'
 end
